@@ -1,0 +1,83 @@
+a1 o(n^3)
+class Solution {
+    public long bowlSubarrays(int[] nums) {
+        int n = nums.length;
+        long ans=0;
+
+        for(int i=0;i<n;i++){
+            for(int j =i+2;j<n;j++){
+                int min = Math.min(nums[i],nums[j]);
+                for(int k =i+1; k<j;k++){
+                    if(nums[k]>min){
+                        min=-1; break;
+                    }
+                }
+                if(min!= -1) ans++;
+            }
+        }
+        return ans;
+    }
+}
+a2 O(N2)
+class Solution {
+    public long bowlSubarrays(int[] nums) {
+        int n = nums.length;
+        long ans=0;
+
+        for(int i=0;i<n-2;i++){
+            int middleMax =Integer.MIN_VALUE;
+            
+            for(int j =i+2;j<n;j++){
+                int min = Math.min(nums[i],nums[j]);
+                middleMax = Math.max(middleMax , nums[j-1]);
+
+                if(min> middleMax) ans++;
+                
+            }
+        }
+        return ans;
+    }
+}
+a3 O(N)
+class Solution {
+    public long bowlSubarrays(int[] nums) {
+        int n = nums.length;
+        int nge[] = nge(nums);
+        int[] pge = pge(nums);
+        int ans =0;
+
+
+        for(int i=0;i<n;i++){
+            if(pge[i]!= -1 && nge[i]!=-1) ans++;
+        }
+        return ans;
+        
+    }
+    int[] nge(int[] nums){
+        int n = nums.length;
+        int nge[] = new int[n];
+        Stack<Integer> st = new Stack<>();
+
+
+        for(int i=n-1;i>=0;i--){
+            while(!st.isEmpty() && nums[st.peek()]<=nums[i]) st.pop();
+
+            nge[i] = st.isEmpty() ? -1: st.peek();
+            st.push(i); 
+        }
+        return nge;
+    }
+    int[] pge(int[] nums){
+        int n = nums.length;
+        int pge[] = new int[n];
+        Stack<Integer> st = new Stack<>();
+
+        for(int i=0;i<n;i++){
+            while(!st.isEmpty() && nums[st.peek()]<=nums[i]) st.pop();
+
+            pge[i] = st.isEmpty() ? -1: st.peek();
+            st.push(i); 
+        }
+        return pge;
+    }
+}
