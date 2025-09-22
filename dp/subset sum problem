@@ -1,0 +1,41 @@
+Given an array of positive integers arr[] and a value sum, determine if there is a subset of arr[] with sum equal to given sum. 
+
+Examples:
+
+Input: arr[] = [3, 34, 4, 12, 5, 2], sum = 9
+Output: true 
+Explanation: Here there exists a subset with target sum = 9, 4+3+2 = 9.
+
+
+class Solution {
+
+    static Boolean isSubsetSum(int arr[], int sum) {
+        // code here
+        int n= arr.length;
+        int[][] dp = new int[n][sum+1];
+        
+        for(int[] row: dp) Arrays.fill(row, -1);
+        
+        return subset(n-1, arr, sum, dp);
+    }
+    static boolean subset(int ind, int[] arr, int sum, int dp[][]){
+        if(sum ==0 ) return true;
+
+        if(ind ==0) return arr[0] ==sum;
+        if(dp[ind][sum]!= -1) return dp[ind][sum]==1;
+        
+        // Not pick
+        boolean notPick = subset(ind - 1, arr, sum, dp);
+
+        // Pick (only if arr[ind] <= sum)
+        boolean pick = false;
+        if (arr[ind] <= sum) {
+            pick = subset(ind - 1, arr, sum - arr[ind], dp);
+        }
+
+        dp[ind][sum] = (pick || notPick) ? 1 : 0;
+        return dp[ind][sum] == 1;
+
+        
+    }
+}
