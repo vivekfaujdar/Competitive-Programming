@@ -1,0 +1,141 @@
+This is a power set problem (since the number of subsets = 2^n for an array of length n).
+
+
+---
+
+✅ Approach 1: Backtracking (Recursive)
+
+We can use recursion to decide at each index: include the element or exclude it.
+
+Java Code
+
+import java.util.*;
+
+public class Subsets {
+    
+    public static void printSubsets(int[] nums) {
+        List<Integer> current = new ArrayList<>();
+        generateSubsets(nums, 0, current);
+    }
+    
+    private static void generateSubsets(int[] nums, int index, List<Integer> current) {
+        if (index == nums.length) {
+            System.out.println(current);
+            return;
+        }
+        
+        // Include nums[index]
+        current.add(nums[index]);
+        generateSubsets(nums, index + 1, current);
+        
+        // Exclude nums[index]
+        current.remove(current.size() - 1);
+        generateSubsets(nums, index + 1, current);
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        printSubsets(nums);
+    }
+}
+
+
+---
+
+✅ Approach 2: Bitmasking (Iterative)
+
+Each subset corresponds to a binary representation of numbers from 0 to 2^n - 1.
+
+If the j-th bit is set, include nums[j].
+
+
+Java Code
+
+import java.util.*;
+
+public class SubsetsBitmask {
+    
+    public static void printSubsets(int[] nums) {
+        int n = nums.length;
+        int total = 1 << n; // 2^n subsets
+        
+        for (int mask = 0; mask < total; mask++) {
+            List<Integer> subset = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                if ((mask & (1 << j)) != 0) {
+                    subset.add(nums[j]);
+                }
+            }
+            System.out.println(subset);
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        printSubsets(nums);
+    }
+}
+
+
+if You want to print only unique subsets when the array may contain duplicates.
+
+If the input is something like {1, 2, 2}, the subsets should be:
+
+[]
+[1]
+[2]
+[1, 2]
+[2, 2]
+[1, 2, 2]
+
+and NOT include duplicate [2] or [1,2] multiple times.
+
+
+---
+
+Approach: Backtracking + Sorting
+
+1. Sort the array first (to bring duplicates together).
+
+
+2. While generating subsets, if two consecutive elements are the same and the previous one was not included, we skip the duplicate.
+
+
+
+
+---
+import java.util.*;
+
+public class UniqueSubsets {
+    
+    public static void printUniqueSubsets(int[] nums) {
+        Arrays.sort(nums); // sort to handle duplicates
+        List<Integer> current = new ArrayList<>();
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(nums, 0, current, result);
+        
+        // Print results
+        for (List<Integer> subset : result) {
+            System.out.println(subset);
+        }
+    }
+    
+    private static void backtrack(int[] nums, int start, List<Integer> current, List<List<Integer>> result) {
+        result.add(new ArrayList<>(current));
+        
+        for (int i = start; i < nums.length; i++) {
+            // Skip duplicates
+            if (i > start && nums[i] == nums[i - 1]) continue;
+            
+            current.add(nums[i]);
+            backtrack(nums, i + 1, current, result);
+            current.remove(current.size() - 1); // backtrack
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 2};
+        printUniqueSubsets(nums);
+    }
+}
+
